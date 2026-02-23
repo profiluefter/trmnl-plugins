@@ -1,1 +1,176 @@
-full!
+{% comment %} --- ZEIT & WOCHENTAG BERECHNEN --- {% endcomment %}
+{% assign offset_seconds = trmnl.user.utc_offset | times: 3600 %}
+{% assign local_time = trmnl.system.timestamp_utc | plus: offset_seconds %}
+{% assign current_day = local_time | date: "%A" | upcase %}
+
+{% comment %} --- RESTAURANTS ZUORDNEN --- {% endcomment %}
+{% assign jku = nil %}
+{% assign khg = nil %}
+{% for item in data %}
+    {% if item.restaurant.name == 'JKU Mensa' %}
+        {% assign jku = item %}
+    {% elsif item.restaurant.name == 'KHG Mensa' %}
+        {% assign khg = item %}
+    {% endif %}
+{% endfor %}
+
+{% comment %} --- JKU MENÜS --- {% endcomment %}
+{% for type in jku.menuTypes %}
+    {% if type.menuTypeName == 'Classic 1' %}
+        {% assign jku_veggie = type.menu.groupedDishes.MAIN_COURSE.first %}
+    {% elsif type.menuTypeName == 'Classic 2' %}
+        {% assign jku_herzhaft = type.menu.groupedDishes.MAIN_COURSE.first %}
+    {% elsif type.menuTypeName == 'Tagesteller' %}
+        {% assign jku_tagesteller_veggie = type.menu.groupedDishes.MAIN_COURSE | where: "type", "VEGETARIAN" | first %}
+        {% assign jku_tagesteller_herzhaft = type.menu.groupedDishes.MAIN_COURSE | where: "type", "MEAT" | first %}
+    {% endif %}
+{% endfor %}
+
+{% comment %} --- KHG MENÜS --- {% endcomment %}
+{% for type in khg.menuTypes %}
+    {% if type.menuTypeName == 'Vegetarisch' %}
+        {% assign khg_veggie = type.menu.groupedDishes.MAIN_COURSE.first %}
+    {% elsif type.menuTypeName == 'Fleisch' %}
+        {% assign khg_herzhaft = type.menu.groupedDishes.MAIN_COURSE.first %}
+    {% endif %}
+{% endfor %}
+
+{% comment %} --- ÖFFNUNGSZEITEN HEUTE --- {% endcomment %}
+{% assign jku_hours_today = jku.restaurant.openingHours | where: "openingDay", current_day | first %}
+{% assign khg_hours_today = khg.restaurant.openingHours | where: "openingDay", current_day | first %}
+
+{% comment %} --- LAYOUT START --- {% endcomment %}
+<div class="layout layout--col layout--stretch gap">
+    <div class="columns">
+
+        <div class="column" data-overflow="true">
+            <span class="value lg:value--base">JKU Mensa</span>
+            <div class="divider" style="margin-top: 5px; margin-bottom: 15px;"></div>
+
+            <div class="flex flex--col w--full gap--large">
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Veggie</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ jku_veggie.name }}</div>
+                        {% if jku_veggie.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_veggie.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Herzhaft</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ jku_herzhaft.name }}</div>
+                        {% if jku_herzhaft.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_herzhaft.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Tagesmenü Veggie</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ jku_tagesteller_veggie.name }}</div>
+                        {% if jku_tagesteller_veggie.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_veggie.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Tagesmenü Herzhaft</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ jku_tagesteller_herzhaft.name }}</div>
+                        {% if jku_tagesteller_herzhaft.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_herzhaft.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="column" data-overflow="true">
+            <span class="value lg:value--base">KHG Mensa</span>
+            <div class="divider" style="margin-top: 5px; margin-bottom: 15px;"></div>
+
+            <div class="flex flex--col w--full gap--large">
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Veggie</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ khg_veggie.name }}</div>
+                        {% if khg_veggie.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ khg_veggie.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="content">
+                        <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Herzhaft</span></div>
+                        <div class="title title--small lg:title--base" data-clamp="2">{{ khg_herzhaft.name }}</div>
+                        {% if khg_herzhaft.sides %}
+                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ khg_herzhaft.sides }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="margin-top: 48px;">
+                <span class="value lg:value--base">Öffnungszeiten</span>
+                <div class="divider" style="margin-top: 5px; margin-bottom: 15px;"></div>
+
+                <div class="grid">
+                    <div class="col--span-2">
+                        <div class="item" style="padding-bottom: 5px;">
+                            <div class="meta"></div>
+                            <div class="content">
+                                <span class="label">JKU</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item col--span-4" style="padding-bottom: 5px;">
+                        <div class="meta"></div>
+                        <div class="content">
+              <span class="value value--small lg:value--large value--tnums">
+                {% if jku_hours_today.closed %}Geschlossen{% else %}{{ jku_hours_today.openingHours.first.openFrom }}-{{ jku_hours_today.openingHours.first.openTo }}{% endif %}
+              </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="grid">
+                    <div class="col--span-2">
+                        <div class="item" style="padding-top: 5px;">
+                            <div class="meta"></div>
+                            <div class="content">
+                                <span class="label">KHG</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item col--span-4" style="padding-top: 5px;">
+                        <div class="meta"></div>
+                        <div class="content">
+              <span class="value value--small lg:value--large value--tnums">
+                {% if khg_hours_today.closed %}Geschlossen{% else %}{{ khg_hours_today.openingHours.first.openFrom }}-{{ khg_hours_today.openingHours.first.openTo }}{% endif %}
+              </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="title_bar">
+    <img class="image" alt="" src="https://trmnl.com/images/plugins/calendar--render.svg">
+    <span class="title">Campus Lunch Linz</span>
+    <span class="instance">{{ local_time | date: "%d. %B %Y" }}</span>
+</div>
