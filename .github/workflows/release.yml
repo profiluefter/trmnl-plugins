@@ -1,0 +1,37 @@
+name: Release Plugins
+
+on:
+  push:
+    tags:
+      - '**'
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zip plugin folders
+        run: |
+          for dir in */; do
+            dir="${dir%/}"
+            if [[ "$dir" != .* ]] && [[ -d "$dir/src" ]]; then
+              zip -j "${dir}.zip" "$dir/src/"*
+              echo "Created ${dir}.zip"
+            fi
+          done
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          TAG="${{ github.ref_name }}"
+          gh release view "$TAG" > /dev/null 2>&1 || gh release create "$TAG" --draft --title "$TAG"
+          for zip in *.zip; do
+            gh release upload "$TAG" "$zip" --clobber
+          done
