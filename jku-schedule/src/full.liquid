@@ -91,10 +91,8 @@
                                 <div class="flex flex--col" style="gap: 2px;">
                                     {% comment %} Time + type badge {% endcomment %}
                                     <div class="flex flex--row" style="align-items: center; gap: 6px;">
-                                        <span class="description description--small"
-                                              style="white-space: nowrap;">{{ event.DTSTART | date: "%H:%M" }}–{{ event.DTEND | date: "%H:%M" }}</span>
-                                        <span class="label label--small label--inverted"
-                                              style="padding: 1px 4px; font-size: 9px;">{{ course_type }}</span>
+                                        <span class="description" style="white-space: nowrap; font-size: 20px;">{{ event.DTSTART | date: "%H:%M" }}–{{ event.DTEND | date: "%H:%M" }}</span>
+                                        <span class="label label--small label--inverted" style="padding: 2px 5px;">{{ course_type }}</span>
                                     </div>
 
                                     {% comment %} Course title (centered, clamped to 2 lines) {% endcomment %}
