@@ -57,7 +57,7 @@
                         <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Veggie</span></div>
                         <div class="title title--small lg:title--base" data-clamp="2">{{ jku_veggie.name }}</div>
                         {% if jku_veggie.sides %}
-                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_veggie.sides }}</div>
+                            <div class="label label--small" style="margin-top: 2px;" data-clamp="1">{{ jku_veggie.sides }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Herzhaft</span></div>
                         <div class="title title--small lg:title--base" data-clamp="2">{{ jku_herzhaft.name }}</div>
                         {% if jku_herzhaft.sides %}
-                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_herzhaft.sides }}</div>
+                            <div class="label label--small" style="margin-top: 2px;" data-clamp="1">{{ jku_herzhaft.sides }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                         <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Tagesmenü Veggie</span></div>
                         <div class="title title--small lg:title--base" data-clamp="2">{{ jku_tagesteller_veggie.name }}</div>
                         {% if jku_tagesteller_veggie.sides %}
-                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_veggie.sides }}</div>
+                            <div class="label label--small" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_veggie.sides }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                         <div style="margin-bottom: 4px;"><span class="label label--small label--inverted">Tagesmenü Herzhaft</span></div>
                         <div class="title title--small lg:title--base" data-clamp="2">{{ jku_tagesteller_herzhaft.name }}</div>
                         {% if jku_tagesteller_herzhaft.sides %}
-                            <div class="label label--small label--gray" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_herzhaft.sides }}</div>
+                            <div class="label label--small" style="margin-top: 2px;" data-clamp="1">{{ jku_tagesteller_herzhaft.sides }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -173,7 +173,8 @@
 </div>
 
 <div class="title_bar">
-    <img class="image" alt="" src="https://trmnl.com/images/plugins/calendar--render.svg">
-    <span class="title">Campus Lunch Linz</span>
+    <i class="fa-solid fa-utensils"></i>
+    {% comment %}<img class="image" alt="" src="utensils-solid-full.svg">{% endcomment %}
+    <span class="title">Mittag am Campus</span>
     <span class="instance">{{ local_time | date: "%d. %B %Y" }}</span>
 </div>
