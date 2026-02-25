@@ -3,6 +3,11 @@
 TRMNL is software for eInk displays that can show various panels with content. I want some custom panels, and they are
 in this repository. For more infos about TRMNL, see [their website](https://trmnl.com/).
 
+These plugins were tested locally with trmnlp but mainly developed for compatibility with the TRMNL BYOS Laravel
+implementation. There seems to be some differences between the two: e.g. `trmnl.user.utc_offset` seems to be a different
+unit and the dom structure is enforced stricter in the Laravel version. Additionally, some liquid template errors occur
+with the Laravel version that work with trmnlp.
+
 ## Plugins
 
 Only the full layout will be designed for now. I won't use half and quarter layouts for myself, so at the moment they
@@ -10,7 +15,7 @@ will not be developed.
 
 ### JKU Menu
 
-Status: WIP
+Status: Prototype
 
 Shows the current menus available at JKU Mensa and KHG Mensa.
 
@@ -21,7 +26,7 @@ Challenges:
 
 ### JKU calendar
 
-Status: Planned
+Status: Prototype
 
 Shows the timetable of classes at JKU. Should include also the room number.
 
