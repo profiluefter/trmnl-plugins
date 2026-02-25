@@ -4,15 +4,22 @@
 # Docs: https://help.trmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
 #
 ---
-strategy: static
-no_screen_padding: 'no'
-dark_mode: 'no'
-# TODO: poll from mirror of official data
+name: JKU Schedule
+strategy: polling
+refresh_interval: 1440
+
+polling_verb: get
+polling_url: '{{ kusss_export_url }}'
+polling_headers: ''
+
 # language=json
 static_data: |
-  {"data": []}
-polling_verb: get
-polling_url: ''
-polling_headers: ''
-name: JKU Schedule
-refresh_interval: 1440
+  {"ical": [{"DTSTAMP":"2026-02-25T21:05:31+00:00","DTSTART":"2026-03-02T08:30:00+01:00","DTEND":"2026-03-02T11:45:00+01:00","SUMMARY":"VL Wirtschaftsgrundlagen der Informatik / Some Person / (367144/2026S)","LOCATION":"HS 18"},{"DTSTAMP":"2026-02-25T21:05:31+00:00","DTSTART":"2026-03-02T10:15:00+01:00","DTEND":"2026-03-02T11:45:00+01:00","SUMMARY":"PR Praktikum aus Softwareentwicklung 2 / Someone Else / (339101/2026S)","LOCATION":"S2 053"}]}
+
+dark_mode: 'no'
+no_screen_padding: 'no'
+
+custom_fields:
+  - keyname: 'kusss_export_url'
+    name: 'KUSSS Export URL'
+    field_type: 'url'
