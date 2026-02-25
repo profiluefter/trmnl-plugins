@@ -1,0 +1,121 @@
+{% comment %} --- LOCAL TIME CALCULATION --- {% endcomment %}
+{% assign offset_seconds = trmnl.user.utc_offset | times: 3600 %}
+{% assign local_time = trmnl.system.timestamp_utc | plus: offset_seconds %}
+{% assign today_date = local_time | date: "%Y-%m-%d" %}
+
+{% comment %} --- GERMAN LOCALE MAPS --- {% endcomment %}
+{% assign de_days = "Mon:Mo|Tue:Di|Wed:Mi|Thu:Do|Fri:Fr|Sat:Sa|Sun:So" | split: "|" %}
+{% assign de_months = "January:Jänner|February:Februar|March:März|April:April|May:Mai|June:Juni|July:Juli|August:August|September:September|October:Oktober|November:November|December:Dezember" | split: "|" %}
+
+{% comment %} --- COLLECT UPCOMING COURSE DATES (skip TERMDATE entries) --- {% endcomment %}
+{% assign courses = data | where: "groupType", "COURSEDATE" %}
+{% assign virtual_courses = data | where: "groupType", "VIRTUALCOURSEDATE" %}
+
+{% comment %} --- MERGE: treat virtual courses the same --- {% endcomment %}
+{% assign all_events = courses | concat: virtual_courses | sort: "begin" %}
+
+{% comment %} --- DETERMINE 3 UPCOMING DISTINCT DAYS WITH EVENTS --- {% endcomment %}
+{% assign day1 = nil %}
+{% assign day2 = nil %}
+{% assign day3 = nil %}
+
+{% for event in all_events %}
+    {% assign event_date = event.begin | date: "%Y-%m-%d" %}
+    {% if event_date >= today_date %}
+        {% if day1 == nil %}
+            {% assign day1 = event_date %}
+        {% elsif event_date != day1 and day2 == nil %}
+            {% assign day2 = event_date %}
+        {% elsif event_date != day1 and event_date != day2 and day3 == nil %}
+            {% assign day3 = event_date %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% comment %} --- LAYOUT --- {% endcomment %}
+<div class="layout layout--col gap--small">
+    <div class="columns" style="align-items: flex-start;">
+
+    {% comment %} === DAY COLUMNS === {% endcomment %}
+        {% assign days = day1 | append: "|" | append: day2 | append: "|" | append: day3 %}
+        {% assign day_list = days | split: "|" %}
+
+        {% for day in day_list %}
+            <div class="column" data-overflow="true">
+                {% comment %} --- Day Header --- {% endcomment %}
+                {% assign day_ts = day | date: "%s" | plus: 0 %}
+                {% assign day_en = day | date: "%a" %}
+                {% assign day_de = day_en %}
+                {% for map in de_days %}
+                    {% assign pair = map | split: ":" %}
+                    {% if pair[0] == day_en %}{% assign day_de = pair[1] %}{% endif %}
+                {% endfor %}
+                <div class="flex flex--row" style="align-items: baseline; gap: 6px;">
+                    <span class="value value--small lg:value--base value--tnums">
+                        {{ day_de }}
+                    </span>
+                    <span class="label label--small">
+                        {{ day | date: "%d.%m." }}
+                    </span>
+                </div>
+
+                {% if day == today_date %}
+                    <div style="height: 3px; background: #000; margin: 4px 0 8px 0; border-radius: 2px;"></div>
+                {% else %}
+                    <div class="divider" style="margin-top: 4px; margin-bottom: 8px;"></div>
+                {% endif %}
+
+                {% comment %} --- Events for this day --- {% endcomment %}
+                <div class="flex flex--col gap--medium">
+                    {% for event in all_events %}
+                        {% assign event_date = event.begin | date: "%Y-%m-%d" %}
+                        {% if event_date == day %}
+                            <div class="flex flex--col" style="gap: 2px;">
+                                {% comment %} Time row {% endcomment %}
+                                <div class="flex flex--row" style="align-items: center; gap: 6px;">
+                                    <span class="description description--small" style="white-space: nowrap;">
+                                        {{ event.begin | date: "%H:%M" }}–{{ event.end | date: "%H:%M" }}
+                                    </span>
+                                    <span class="label label--small label--inverted" style="padding: 1px 4px; font-size: 9px;">
+                                        {{ event.courseType }}
+                                    </span>
+                                </div>
+                                {% comment %} Course title: use subtitle for "Special Topics" {% endcomment %}
+                                {% if event.courseClassVariantTitle == "Special Topics" and event.courseSubtitle != "" %}
+                                    <div class="title title--small text--center" data-clamp="2" style="line-height: 1.2">
+                                        {{ event.courseSubtitle }}
+                                    </div>
+                                {% else %}
+                                    <div class="title title--small text--center" data-clamp="2" style="line-height: 1.2">
+                                        {{ event.courseClassVariantTitle }}
+                                    </div>
+                                {% endif %}
+                                {% comment %} Room {% endcomment %}
+                                <div class="flex flex--row" style="align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-location-dot" style="font-size: 9px; opacity: 0.6;"></i>
+                                    <span class="label label--small">
+                                        {{ event.room }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% assign month_en = local_time | date: "%B" %}
+{% assign month_de = month_en %}
+{% for map in de_months %}
+    {% assign pair = map | split: ":" %}
+    {% if pair[0] == month_en %}{% assign month_de = pair[1] %}{% endif %}
+{% endfor %}
+
+<div class="title_bar">
+    <i class="fa-solid fa-calendar-days"></i>
+    <span class="title">Stundenplan</span>
+    <span class="instance">{{ local_time | date: "%d. " }}{{ month_de }}{{ local_time | date: " %Y" }}</span>
+</div>

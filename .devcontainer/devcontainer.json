@@ -19,7 +19,8 @@
   "customizations": {
     "jetbrains": {
       "plugins": [
-        "com.intellij.lang.liquid"
+        "com.intellij.lang.liquid",
+        "com.intellij.ml.llm"
       ]
     }
   },
