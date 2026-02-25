@@ -14,5 +14,5 @@ static_data: |
 polling_verb: get
 polling_url: ''
 polling_headers: ''
-name: My Plugin
+name: JKU Schedule
 refresh_interval: 1440
