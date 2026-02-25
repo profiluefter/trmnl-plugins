@@ -22,6 +22,9 @@
         {% assign jku_herzhaft = type.menu.groupedDishes.MAIN_COURSE.first %}
     {% elsif type.menuTypeName == 'Tagesteller' %}
         {% assign jku_tagesteller_veggie = type.menu.groupedDishes.MAIN_COURSE | where: "type", "VEGETARIAN" | first %}
+        {% unless jku_tagesteller_veggie %}
+            {% assign jku_tagesteller_veggie = type.menu.groupedDishes.MAIN_COURSE | where: "type", "VEGAN" | first %}
+        {% endunless %}
         {% assign jku_tagesteller_herzhaft = type.menu.groupedDishes.MAIN_COURSE | where: "type", "MEAT" | first %}
     {% endif %}
 {% endfor %}
