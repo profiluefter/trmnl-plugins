@@ -1,6 +1,5 @@
 {% comment %} --- ZEIT & WOCHENTAG BERECHNEN --- {% endcomment %}
-{% assign offset_seconds = trmnl.user.utc_offset | times: 3600 %}
-{% assign local_time = trmnl.system.timestamp_utc | plus: offset_seconds %}
+{% assign local_time = trmnl.system.timestamp_utc | plus: trmnl.user.utc_offset %}
 {% assign current_day = local_time | date: "%A" | upcase %}
 
 {% comment %} --- RESTAURANTS ZUORDNEN --- {% endcomment %}
